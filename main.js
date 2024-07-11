@@ -1,6 +1,8 @@
 import './style.css'
 import axios from 'axios';
 
+const loader = document.getElementById('loader');
+
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const initializeMap = () => {
@@ -65,12 +67,15 @@ const handleGetClima = () => {
 const getClima = async (long, lat) => {
   try {
     const { data } = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/clima?lat=${encodeURIComponent(lat)}&long=${encodeURIComponent(long)}`);
+
     updateWeatherInfo(data);
 
     map.flyTo({ center: [long, lat], zoom: 14 });
     new mapboxgl.Marker().setLngLat([long, lat]).addTo(map);
   } catch (error) {
     alert("Error al obtener la información del clima", error);
+  } finally {
+    loader.style.display = 'none'; // Ocultar el loader
   }
 };
 
